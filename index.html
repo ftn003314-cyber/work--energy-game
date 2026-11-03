@@ -1,140 +1,152 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>اسحبي الإجابة وابدئي شغلاً!</title>
 <style>
-:root{--navy:#172554;--pink:#ec4899;--blue:#38bdf8;--green:#34d399;--yellow:#facc15;--purple:#c084fc;--orange:#fb923c}
-*{box-sizing:border-box}
-body{margin:0;font-family:Tahoma,Arial,sans-serif;background:linear-gradient(135deg,#eff6ff,#fff1f2);color:#172554}
-main{max-width:900px;margin:auto;padding:18px}
-header{text-align:center;background:#fff;border:2px solid #fbcfe8;border-radius:24px;padding:20px;margin-bottom:16px;box-shadow:0 6px 18px #17255412}
-h1{margin:0 0 8px;font-size:clamp(24px,5vw,38px)}
-header p{margin:0;line-height:1.8}
-.top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:12px 0}
-.pill{background:white;border:1px solid #bfdbfe;border-radius:30px;padding:10px 16px;font-weight:bold}
-.layout{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.panel{background:#fff;border:1px solid #dbeafe;border-radius:20px;padding:14px;box-shadow:0 4px 14px #1725540c}
-.panel h2{font-size:20px;margin:2px 0 12px}
-.question{border:2px dashed #cbd5e1;border-radius:14px;padding:12px;margin:9px 0;display:flex;gap:12px;align-items:center;min-height:75px;cursor:pointer;background:#fff;transition:.15s}
-.question.selected{border:3px solid var(--pink);background:#fdf2f8}
-.question.done{border-style:solid;background:#f0fdf4}
-.num{width:42px;height:42px;flex:0 0 42px;border-radius:50%;display:grid;place-items:center;font-size:22px;font-weight:bold;background:#dbeafe}
-.qtext{font-weight:bold;line-height:1.6}
-.answers{display:grid;gap:9px}
-.answer{width:100%;text-align:center;border:0;border-radius:14px;padding:15px 10px;font-size:20px;font-weight:bold;cursor:pointer;color:#172554;box-shadow:0 3px 0 #00000015}
-.answer:disabled{opacity:.65;cursor:default}
-.a1{background:#f9a8d4}.a2{background:#7dd3fc}.a3{background:#a7f3d0}.a4{background:#fde047}.a5{background:#d8b4fe}.a6{background:#fdba74}
-.feedback{margin-top:14px;padding:13px;border-radius:14px;background:#f1f5f9;min-height:54px;line-height:1.7;font-weight:bold;text-align:center}
-.feedback.good{background:#dcfce7;color:#166534}.feedback.bad{background:#fee2e2;color:#991b1b}
-.actions{display:flex;justify-content:center;gap:10px;margin:16px 0;flex-wrap:wrap}
-button.action{border:0;border-radius:30px;padding:12px 22px;font-size:16px;font-weight:bold;cursor:pointer;background:#172554;color:white}
-button.action.secondary{background:#e2e8f0;color:#172554}
-.result{display:none;text-align:center;background:white;border:2px solid #a7f3d0;border-radius:20px;padding:22px;margin:16px 0}
-.result strong{font-size:38px;color:#059669}
-footer{text-align:center;color:#64748b;font-size:13px;padding:12px}
-@media(max-width:680px){.layout{grid-template-columns:1fr}.panel h2{font-size:18px}.question{min-height:68px}.answer{padding:13px}}
+:root{--bg:#eaf4fa;--ink:#1d2b3a;--wood1:#c98f55;--wood2:#a86b34;--wood3:#7a4a20;--ok:#16a34a;--bad:#dc2626}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{background:radial-gradient(circle at 20% 0,#fff 0,var(--bg) 60%);color:var(--ink);font-family:Tahoma,"Segoe UI","Geeza Pro","Arial",sans-serif;min-height:100vh;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+.app{max-width:760px;margin:0 auto;padding:12px}
+h1{margin:6px 0 2px;text-align:center;font-size:clamp(22px,5vw,32px);color:var(--wood3)}
+.sub{text-align:center;margin:0 0 10px;color:#52667a;font-size:14px}
+.stats{display:flex;justify-content:center;gap:10px;margin-bottom:8px}
+.stats div{background:#fff;border:2px solid #cfe0ec;border-radius:14px;padding:6px 14px;font-weight:700;font-size:15px}
+.stats b{color:var(--wood2);font-size:20px;margin:0 4px}
+#fb{min-height:30px;text-align:center;font-weight:700;font-size:16px;margin-bottom:6px;transition:color .2s}
+.heads{display:grid;grid-template-columns:1fr 1fr;gap:14px;font-weight:800;text-align:center;color:var(--wood3);margin-bottom:4px}
+.board{display:grid;grid-template-columns:1.25fr 1fr;gap:14px;align-items:start}
+.col{display:flex;flex-direction:column;gap:10px}
+.qb{position:relative;display:flex;align-items:center;gap:10px;min-height:76px;padding:8px 10px;border-radius:12px;color:#fff;cursor:pointer;
+background:repeating-linear-gradient(95deg,rgba(255,255,255,.07) 0 6px,rgba(0,0,0,.05) 6px 12px),linear-gradient(180deg,var(--wood1),var(--wood2));border:3px solid var(--wood3);box-shadow:0 4px 0 var(--wood3);transition:transform .15s,box-shadow .15s}
+.qb.sel{outline:4px solid #fde047;transform:translateY(-2px)}
+.qb.over{outline:4px dashed #fff;transform:scale(1.03)}
+.qb.ok{background:linear-gradient(180deg,#34d399,#16a34a);border-color:#0b6b30;box-shadow:0 4px 0 #0b6b30;cursor:default}
+.num{flex:none;width:34px;height:34px;border-radius:50%;background:#fff;color:var(--wood3);display:grid;place-items:center;font-weight:800;font-size:18px}
+.qt{flex:1;font-size:clamp(14px,3.4vw,17px);font-weight:700;line-height:1.5}
+.got{display:none;margin-top:4px;background:#fff;color:#0b6b30;border-radius:8px;padding:2px 10px;font-weight:800;direction:ltr;width:max-content;max-width:100%}
+.qb.ok .got{display:block}
+.hint{flex:none;border:0;background:rgba(255,255,255,.9);border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;align-self:flex-start}
+.ht{display:none;font-size:13px;margin-top:4px;background:rgba(0,0,0,.22);border-radius:8px;padding:3px 8px}
+.ht.on{display:block}
+.qb.ok .hint,.qb.ok .ht{display:none}
+.ar{position:relative;display:flex;align-items:center;justify-content:center;min-height:76px;padding:6px 26px 6px 30px;color:#fff;font-weight:800;font-size:clamp(15px,3.6vw,19px);background:var(--c);
+clip-path:polygon(0 0,88% 0,100% 50%,88% 100%,0 100%);touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none;text-align:center;line-height:1.3}
+.ar bdi{unicode-bidi:isolate}
+.ar.sel{filter:brightness(1.15) saturate(1.2);transform:translateX(6px)}
+.ar.drag{opacity:.35}
+.ar.done{visibility:hidden}
+.ar.shake,.qb.shake{animation:sh .4s}
+.ghost{position:fixed;z-index:99;pointer-events:none;width:170px;min-height:64px;opacity:.95;filter:drop-shadow(0 8px 10px rgba(0,0,0,.3))}
+@keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.pf{position:absolute;pointer-events:none;font-size:22px;animation:pf .9s forwards}
+@keyframes pf{from{opacity:1;transform:translateY(0) scale(.6)}to{opacity:0;transform:translateY(-46px) scale(1.4)}}
+#end{display:none;text-align:center;padding:30px 10px}
+#end .big{font-size:72px}
+#end h2{margin:6px 0;font-size:28px;color:var(--wood3)}
+#end .sc{font-size:46px;font-weight:800;color:var(--ok)}
+.btn{background:var(--wood2);color:#fff;border:0;border-radius:14px;padding:12px 28px;font:inherit;font-size:18px;font-weight:800;cursor:pointer;box-shadow:0 4px 0 var(--wood3);margin-top:12px}
+.btn.s{padding:8px 18px;font-size:15px;margin:0}
+.top{text-align:center}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
-<main>
-<header>
-  <h1>اسحبي الإجابة وابدئي شغلاً! ⚡</h1>
-  <p>تحدّي الشغل والطاقة — اختاري صندوق السؤال، ثم اضغطي على سهم الإجابة المناسب.<br>لكل سؤال محاولة واحدة، واجمعي أكبر عدد من النقاط!</p>
-</header>
-<div class="top">
-  <div class="pill">⭐ النقاط: <span id="score">0</span> / 6</div>
-  <div class="pill">📦 الأسئلة المتبقية: <span id="remaining">6</span></div>
+<div class="app">
+<h1>اسحبي الإجابة وابدئي شغلاً!</h1>
+<p class="sub">اسحبي السهم الملوّن إلى صندوق السؤال المناسب، أو اضغطي السؤال ثم الإجابة</p>
+<div id="play">
+  <div class="stats"><div>النقاط<b id="sc">0</b>/ 6</div><div>المتبقي<b id="rm">6</b></div></div>
+  <div id="fb"></div>
+  <div class="heads"><div>(أ) الأسئلة</div><div>(ب) الإجابات</div></div>
+  <div class="board"><div class="col" id="qc"></div><div class="col" id="ac"></div></div>
+  <div class="top" style="margin-top:14px"><button class="btn s" id="rs">🔀 إعادة الخلط</button></div>
 </div>
-<div class="layout">
-  <section class="panel">
-    <h2>🧰 العمود (أ) — صناديق الأسئلة</h2>
-    <div id="questions"></div>
-  </section>
-  <section class="panel">
-    <h2>➡️ العمود (ب) — أسهم الإجابات</h2>
-    <div class="answers" id="answers"></div>
-  </section>
+<div id="end">
+  <div class="big" id="em">🏆</div>
+  <h2 id="msg"></h2>
+  <div class="sc"><span id="fs">0</span> / 6</div>
+  <p id="fm" style="color:#52667a"></p>
+  <button class="btn" id="again">🔁 العبي مرة أخرى</button>
 </div>
-<div id="feedback" class="feedback" aria-live="polite">ابدئي باختيار صندوق السؤال رقم 1.</div>
-<div class="actions">
-  <button class="action secondary" id="hint">💡 تلميح</button>
-  <button class="action" id="reset">إعادة اللعب ↻</button>
 </div>
-<section class="result" id="result">
-  <h2>انتهى التحدي! 🎉</h2>
-  <p>نتيجتك النهائية</p>
-  <strong id="finalScore">0 / 6</strong>
-  <p id="message"></p>
-  <button class="action" onclick="resetGame()">العبِي مرة أخرى</button>
-</section>
-<footer>فيزياء 2 | الشغل والطاقة</footer>
-</main>
 <script>
-const qs=[
-"ما رمز الشغل؟",
-"ما وحدة قياس الشغل في النظام الدولي؟",
-"ما قانون الشغل عندما تكون القوة موازية للإزاحة؟",
-"إذا كانت القوة عمودية على الإزاحة (θ = 90°)، فكم يكون الشغل؟",
-"إذا كانت القوة بعكس اتجاه الإزاحة، فإن الشغل يكون…",
-"ما العلاقة بين الشغل والتغير في الطاقة الحركية؟"
-];
-const ans=[
-{t:"W",c:"a1",id:0},
-{t:"J",c:"a2",id:1},
-{t:"W = F d",c:"a3",id:2},
-{t:"صفر",c:"a4",id:3},
-{t:"سالبًا",c:"a5",id:4},
-{t:"W = ΔKE",c:"a6",id:5}
-];
-const hints=[
-"يرمز للشغل بحرف إنجليزي كبير.",
-"وحدة الشغل هي نفسها وحدة الطاقة.",
-"عندما تكون الزاوية صفرًا، نستخدم القوة مضروبة في الإزاحة.",
-"تذكري قيمة جيب تمام 90 درجة.",
-"القوة والإزاحة في اتجاهين متعاكسين.",
-"هذه هي مبرهنة الشغل والطاقة الحركية."
-];
-let selected=null, solved=new Set(), score=0;
-const qEl=document.getElementById('questions'), aEl=document.getElementById('answers');
-function render(){
- qEl.innerHTML='';
- qs.forEach((q,i)=>{
-  const d=document.createElement('div');
-  d.className='question'+(selected===i?' selected':'')+(solved.has(i)?' done':'');
-  d.innerHTML=`<span class="num">${i+1}</span><span class="qtext">${q}</span><span>${solved.has(i)?'✓':''}</span>`;
-  d.onclick=()=>{if(solved.has(i))return;selected=i;render();say('اختاري الآن سهم الإجابة المناسب للسؤال '+(i+1)+'.','');};
-  qEl.appendChild(d);
- });
- aEl.innerHTML='';
- ans.forEach((a,i)=>{
-  const b=document.createElement('button');b.className='answer '+a.c;b.textContent=a.t;
-  b.disabled=[...solved].some(x=>x===a.id);
-  b.onclick=()=>choose(a.id);
-  aEl.appendChild(b);
- });
- document.getElementById('score').textContent=score;
- document.getElementById('remaining').textContent=6-solved.size;
+(function(){
+var Q=[
+{q:"ما رمز الشغل؟",a:"W",h:"يأتي من الكلمة الإنجليزية Work."},
+{q:"ما وحدة قياس الشغل في النظام الدولي؟",a:"J",h:"سُميت تكريمًا للعالم جول."},
+{q:"ما قانون الشغل عندما تكون القوة موازية للإزاحة؟",a:"W = Fd",h:"الشغل يساوي القوة × الإزاحة."},
+{q:"إذا كانت القوة عمودية على الإزاحة (θ = 90°)، فكم يكون الشغل؟",a:"صفر",h:"تذكّري: cos 90° = 0."},
+{q:"إذا كانت القوة بعكس اتجاه الإزاحة فإن الشغل يكون؟",a:"سالبًا",h:"الزاوية 180° وقيمة cos 180° سالبة."},
+{q:"ما العلاقة بين الشغل والتغير في الطاقة الحركية؟",a:"W = ΔKE",h:"نظرية الشغل والطاقة."}];
+var C=["#e11d48","#2563eb","#d97706","#7c3aed","#0d9488","#ea580c"];
+var $=function(i){return document.getElementById(i)};
+var matched,wrong,score,selQ,selA,order,drag;
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+function shuffle(){ /* ترتيب عشوائي بحيث لا تقع أي إجابة بجانب سؤالها */
+ var o,ok;
+ do{o=[0,1,2,3,4,5];for(var i=5;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=o[i];o[i]=o[j];o[j]=t}
+  ok=true;for(var p=0;p<6;p++)if(o[p]===p)ok=false}while(!ok);
+ return o}
+function start(){
+ matched=[0,0,0,0,0,0];wrong=[0,0,0,0,0,0];score=0;selQ=selA=null;order=shuffle();
+ $("end").style.display="none";$("play").style.display="block";$("fb").textContent="";
+ $("qc").innerHTML=Q.map(function(x,i){return '<div class="qb" data-i="'+i+'"><span class="num">'+(i+1)+'</span><div class="qt">'+esc(x.q).replace("θ = 90°","<bdi>θ = 90°</bdi>")+'<div class="ht" id="h'+i+'">💡 '+esc(x.h)+'</div><div class="got"></div></div><button class="hint" data-h="'+i+'" aria-label="تلميح">💡</button></div>'}).join("");
+ $("ac").innerHTML=order.map(function(id){return '<div class="ar" data-a="'+id+'" style="--c:'+C[id]+'"><bdi>'+esc(Q[id].a)+'</bdi></div>'}).join("");
+ upd()}
+function upd(){$("sc").textContent=score;$("rm").textContent=6-matched.reduce(function(a,b){return a+b},0)}
+function fb(t,c){var e=$("fb");e.textContent=t;e.style.color=c}
+function burst(el){var e=["✨","⭐","🎉"];for(var k=0;k<3;k++){var s=document.createElement("span");s.className="pf";s.textContent=e[k];s.style.left=(20+k*30)+"%";s.style.top="0";el.appendChild(s);setTimeout(function(n){return function(){n.remove()}}(s),950)}}
+function clearSel(){selQ=selA=null;document.querySelectorAll(".sel").forEach(function(e){e.classList.remove("sel")})}
+function shake(el){el.classList.remove("shake");void el.offsetWidth;el.classList.add("shake")}
+function attempt(q,a){
+ q=+q;a=+a;var qb=document.querySelector('.qb[data-i="'+q+'"]'),ar=document.querySelector('.ar[data-a="'+a+'"]');
+ if(matched[q]||ar.classList.contains("done")){clearSel();return}
+ if(a===q){ /* التحقق بالمعرّف الداخلي وليس بترتيب الظهور */
+  matched[q]=1;if(!wrong[q])score++;
+  qb.classList.add("ok");qb.classList.remove("sel");qb.querySelector(".got").innerHTML="<bdi>"+esc(Q[a].a)+"</bdi>";
+  ar.classList.add("done");burst(qb);fb("✅ إجابة صحيحة! أحسنتِ","#16a34a");upd();clearSel();
+  if(matched.every(function(m){return m}))setTimeout(finish,900);
+ }else{
+  wrong[q]=1;shake(qb);shake(ar);fb("❌ حاولي مرة أخرى","#dc2626");clearSel()}
 }
-function say(t,kind){const f=document.getElementById('feedback');f.textContent=t;f.className='feedback '+(kind||'');}
-function choose(answerId){
- if(selected===null){say('اختاري صندوق سؤال أولًا.','bad');return;}
- const current=selected;
- if(current===answerId){score++;solved.add(current);say('أحسنتِ! إجابة صحيحة 🌟','good');}
- else {solved.add(current);say('ليست الإجابة الصحيحة. الإجابة المناسبة هي: '+ans[current].t+' — راجعي المفهوم وحاولي في بقية الأسئلة.','bad');}
- selected=null;render();
- if(solved.size===6){
-  document.getElementById('result').style.display='block';
-  document.getElementById('finalScore').textContent=score+' / 6';
-  document.getElementById('message').textContent=score===6?'ممتاز! أتقنتِ مفاهيم الشغل 👏':score>=4?'عمل رائع، راجعي السؤال الذي أخطأتِ فيه.':'مواصلة المحاولة طريق الإتقان؛ راجعي المفاهيم ثم أعيدي اللعب.';
-  document.getElementById('result').scrollIntoView({behavior:'smooth',block:'center'});
- }
-}
-function resetGame(){selected=null;solved=new Set();score=0;document.getElementById('result').style.display='none';say('ابدئي باختيار صندوق السؤال رقم 1.','');render();}
-document.getElementById('reset').onclick=resetGame;
-document.getElementById('hint').onclick=()=>{if(selected===null){say('اختاري سؤالًا أولًا لتحصلي على تلميح.','');return;}say('💡 '+hints[selected],'');};
-render();
+function finish(){
+ $("play").style.display="none";$("end").style.display="block";$("fs").textContent=score;
+ var m=score===6?["🏆","ممتازة! أنتِ بطلة الشغل"]:score>=4?["🌟","رائعة! قريبة جدًا من الإتقان"]:["💪","محاولة جيدة، أعيدي اللعب وستتحسنين"];
+ $("em").textContent=m[0];$("msg").textContent=m[1];
+ $("fm").textContent="الدرجة تُحسب للإجابات الصحيحة من أول محاولة لكل سؤال"}
+$("qc").addEventListener("click",function(e){
+ var h=e.target.closest(".hint");if(h){$("h"+h.dataset.h).classList.toggle("on");return}
+ var qb=e.target.closest(".qb");if(!qb||qb.classList.contains("ok"))return;
+ document.querySelectorAll(".qb.sel").forEach(function(x){x.classList.remove("sel")});
+ selQ=+qb.dataset.i;qb.classList.add("sel");if(selA!==null)attempt(selQ,selA)});
+$("ac").addEventListener("pointerdown",function(e){
+ var ar=e.target.closest(".ar");if(!ar||ar.classList.contains("done"))return;
+ drag={ar:ar,id:+ar.dataset.a,x:e.clientX,y:e.clientY,g:null,pid:e.pointerId};
+ try{ar.setPointerCapture(e.pointerId)}catch(x){}});
+function under(x,y){var el=document.elementFromPoint(x,y);return el&&el.closest?el.closest(".qb"):null}
+document.addEventListener("pointermove",function(e){
+ if(!drag||e.pointerId!==drag.pid)return;
+ if(!drag.g&&Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>8){
+  drag.g=drag.ar.cloneNode(true);drag.g.className="ar ghost";drag.g.style.setProperty("--c",C[drag.id]);document.body.appendChild(drag.g);drag.ar.classList.add("drag")}
+ if(drag.g){drag.g.style.left=(e.clientX-85)+"px";drag.g.style.top=(e.clientY-32)+"px";
+  document.querySelectorAll(".qb.over").forEach(function(x){x.classList.remove("over")});
+  var q=under(e.clientX,e.clientY);if(q&&!q.classList.contains("ok"))q.classList.add("over")}});
+function endDrag(e,cancel){
+ if(!drag||e.pointerId!==drag.pid)return;
+ var d=drag;drag=null;document.querySelectorAll(".qb.over").forEach(function(x){x.classList.remove("over")});
+ d.ar.classList.remove("drag");
+ if(d.g){d.g.remove();if(!cancel){var q=under(e.clientX,e.clientY);if(q)attempt(q.dataset.i,d.id)}}
+ else if(!cancel){ /* ضغطة بدون سحب = اختيار السهم */
+  var was=d.ar.classList.contains("sel");document.querySelectorAll(".ar.sel").forEach(function(x){x.classList.remove("sel")});
+  if(was){selA=null}else{selA=d.id;d.ar.classList.add("sel");if(selQ!==null)attempt(selQ,selA)}}}
+document.addEventListener("pointerup",function(e){endDrag(e,false)});
+document.addEventListener("pointercancel",function(e){endDrag(e,true)});
+$("rs").onclick=start;$("again").onclick=start;
+start();
+})();
 </script>
 </body>
 </html>
