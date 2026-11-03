@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اسحبي الإجابة وابدئي شغلاً!</title>
+<style>
+:root{--navy:#172554;--pink:#ec4899;--blue:#38bdf8;--green:#34d399;--yellow:#facc15;--purple:#c084fc;--orange:#fb923c}
+*{box-sizing:border-box}
+body{margin:0;font-family:Tahoma,Arial,sans-serif;background:linear-gradient(135deg,#eff6ff,#fff1f2);color:#172554}
+main{max-width:900px;margin:auto;padding:18px}
+header{text-align:center;background:#fff;border:2px solid #fbcfe8;border-radius:24px;padding:20px;margin-bottom:16px;box-shadow:0 6px 18px #17255412}
+h1{margin:0 0 8px;font-size:clamp(24px,5vw,38px)}
+header p{margin:0;line-height:1.8}
+.top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:12px 0}
+.pill{background:white;border:1px solid #bfdbfe;border-radius:30px;padding:10px 16px;font-weight:bold}
+.layout{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.panel{background:#fff;border:1px solid #dbeafe;border-radius:20px;padding:14px;box-shadow:0 4px 14px #1725540c}
+.panel h2{font-size:20px;margin:2px 0 12px}
+.question{border:2px dashed #cbd5e1;border-radius:14px;padding:12px;margin:9px 0;display:flex;gap:12px;align-items:center;min-height:75px;cursor:pointer;background:#fff;transition:.15s}
+.question.selected{border:3px solid var(--pink);background:#fdf2f8}
+.question.done{border-style:solid;background:#f0fdf4}
+.num{width:42px;height:42px;flex:0 0 42px;border-radius:50%;display:grid;place-items:center;font-size:22px;font-weight:bold;background:#dbeafe}
+.qtext{font-weight:bold;line-height:1.6}
+.answers{display:grid;gap:9px}
+.answer{width:100%;text-align:center;border:0;border-radius:14px;padding:15px 10px;font-size:20px;font-weight:bold;cursor:pointer;color:#172554;box-shadow:0 3px 0 #00000015}
+.answer:disabled{opacity:.65;cursor:default}
+.a1{background:#f9a8d4}.a2{background:#7dd3fc}.a3{background:#a7f3d0}.a4{background:#fde047}.a5{background:#d8b4fe}.a6{background:#fdba74}
+.feedback{margin-top:14px;padding:13px;border-radius:14px;background:#f1f5f9;min-height:54px;line-height:1.7;font-weight:bold;text-align:center}
+.feedback.good{background:#dcfce7;color:#166534}.feedback.bad{background:#fee2e2;color:#991b1b}
+.actions{display:flex;justify-content:center;gap:10px;margin:16px 0;flex-wrap:wrap}
+button.action{border:0;border-radius:30px;padding:12px 22px;font-size:16px;font-weight:bold;cursor:pointer;background:#172554;color:white}
+button.action.secondary{background:#e2e8f0;color:#172554}
+.result{display:none;text-align:center;background:white;border:2px solid #a7f3d0;border-radius:20px;padding:22px;margin:16px 0}
+.result strong{font-size:38px;color:#059669}
+footer{text-align:center;color:#64748b;font-size:13px;padding:12px}
+@media(max-width:680px){.layout{grid-template-columns:1fr}.panel h2{font-size:18px}.question{min-height:68px}.answer{padding:13px}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>اسحبي الإجابة وابدئي شغلاً! ⚡</h1>
+  <p>تحدّي الشغل والطاقة — اختاري صندوق السؤال، ثم اضغطي على سهم الإجابة المناسب.<br>لكل سؤال محاولة واحدة، واجمعي أكبر عدد من النقاط!</p>
+</header>
+<div class="top">
+  <div class="pill">⭐ النقاط: <span id="score">0</span> / 6</div>
+  <div class="pill">📦 الأسئلة المتبقية: <span id="remaining">6</span></div>
+</div>
+<div class="layout">
+  <section class="panel">
+    <h2>🧰 العمود (أ) — صناديق الأسئلة</h2>
+    <div id="questions"></div>
+  </section>
+  <section class="panel">
+    <h2>➡️ العمود (ب) — أسهم الإجابات</h2>
+    <div class="answers" id="answers"></div>
+  </section>
+</div>
+<div id="feedback" class="feedback" aria-live="polite">ابدئي باختيار صندوق السؤال رقم 1.</div>
+<div class="actions">
+  <button class="action secondary" id="hint">💡 تلميح</button>
+  <button class="action" id="reset">إعادة اللعب ↻</button>
+</div>
+<section class="result" id="result">
+  <h2>انتهى التحدي! 🎉</h2>
+  <p>نتيجتك النهائية</p>
+  <strong id="finalScore">0 / 6</strong>
+  <p id="message"></p>
+  <button class="action" onclick="resetGame()">العبِي مرة أخرى</button>
+</section>
+<footer>فيزياء 2 | الشغل والطاقة</footer>
+</main>
+<script>
+const qs=[
+"ما رمز الشغل؟",
+"ما وحدة قياس الشغل في النظام الدولي؟",
+"ما قانون الشغل عندما تكون القوة موازية للإزاحة؟",
+"إذا كانت القوة عمودية على الإزاحة (θ = 90°)، فكم يكون الشغل؟",
+"إذا كانت القوة بعكس اتجاه الإزاحة، فإن الشغل يكون…",
+"ما العلاقة بين الشغل والتغير في الطاقة الحركية؟"
+];
+const ans=[
+{t:"W",c:"a1",id:0},
+{t:"J",c:"a2",id:1},
+{t:"W = F d",c:"a3",id:2},
+{t:"صفر",c:"a4",id:3},
+{t:"سالبًا",c:"a5",id:4},
+{t:"W = ΔKE",c:"a6",id:5}
+];
+const hints=[
+"يرمز للشغل بحرف إنجليزي كبير.",
+"وحدة الشغل هي نفسها وحدة الطاقة.",
+"عندما تكون الزاوية صفرًا، نستخدم القوة مضروبة في الإزاحة.",
+"تذكري قيمة جيب تمام 90 درجة.",
+"القوة والإزاحة في اتجاهين متعاكسين.",
+"هذه هي مبرهنة الشغل والطاقة الحركية."
+];
+let selected=null, solved=new Set(), score=0;
+const qEl=document.getElementById('questions'), aEl=document.getElementById('answers');
+function render(){
+ qEl.innerHTML='';
+ qs.forEach((q,i)=>{
+  const d=document.createElement('div');
+  d.className='question'+(selected===i?' selected':'')+(solved.has(i)?' done':'');
+  d.innerHTML=`<span class="num">${i+1}</span><span class="qtext">${q}</span><span>${solved.has(i)?'✓':''}</span>`;
+  d.onclick=()=>{if(solved.has(i))return;selected=i;render();say('اختاري الآن سهم الإجابة المناسب للسؤال '+(i+1)+'.','');};
+  qEl.appendChild(d);
+ });
+ aEl.innerHTML='';
+ ans.forEach((a,i)=>{
+  const b=document.createElement('button');b.className='answer '+a.c;b.textContent=a.t;
+  b.disabled=[...solved].some(x=>x===a.id);
+  b.onclick=()=>choose(a.id);
+  aEl.appendChild(b);
+ });
+ document.getElementById('score').textContent=score;
+ document.getElementById('remaining').textContent=6-solved.size;
+}
+function say(t,kind){const f=document.getElementById('feedback');f.textContent=t;f.className='feedback '+(kind||'');}
+function choose(answerId){
+ if(selected===null){say('اختاري صندوق سؤال أولًا.','bad');return;}
+ const current=selected;
+ if(current===answerId){score++;solved.add(current);say('أحسنتِ! إجابة صحيحة 🌟','good');}
+ else {solved.add(current);say('ليست الإجابة الصحيحة. الإجابة المناسبة هي: '+ans[current].t+' — راجعي المفهوم وحاولي في بقية الأسئلة.','bad');}
+ selected=null;render();
+ if(solved.size===6){
+  document.getElementById('result').style.display='block';
+  document.getElementById('finalScore').textContent=score+' / 6';
+  document.getElementById('message').textContent=score===6?'ممتاز! أتقنتِ مفاهيم الشغل 👏':score>=4?'عمل رائع، راجعي السؤال الذي أخطأتِ فيه.':'مواصلة المحاولة طريق الإتقان؛ راجعي المفاهيم ثم أعيدي اللعب.';
+  document.getElementById('result').scrollIntoView({behavior:'smooth',block:'center'});
+ }
+}
+function resetGame(){selected=null;solved=new Set();score=0;document.getElementById('result').style.display='none';say('ابدئي باختيار صندوق السؤال رقم 1.','');render();}
+document.getElementById('reset').onclick=resetGame;
+document.getElementById('hint').onclick=()=>{if(selected===null){say('اختاري سؤالًا أولًا لتحصلي على تلميح.','');return;}say('💡 '+hints[selected],'');};
+render();
+</script>
+</body>
+</html>
